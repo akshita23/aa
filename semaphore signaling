@@ -1,0 +1,56 @@
+Semaphore demo
+
+#include<p24fj128ga110.h>
+#include "FreeRTOS.h"
+#include"task.h"
+#include"queue.h"
+#include "croutine.h"
+#include"semphr.h"
+#define LEDS        PORTB
+#define ON          0xFF
+#define OUTPUT_PINS 0x00
+#define OFF         0x00
+SemaphoreHandle_t xSemaphore;
+static void Task1( void *pvParameters );
+static void Task2( void *pvParameters );
+xSemaphore = xSemaphoreCreateBinary();
+int c=0;
+int main(void)
+{
+xTaskCreate( Task1, "Create",2000, NULL, 3, NULL );
+xTaskCreate( Task2, "Take",2000, NULL, 2, NULL );
+vTaskStartScheduler();
+
+return 0;
+}
+static void Task1(void *pvparameter)
+{
+
+int c=0;
+while(c<1000)
+{
+TRISC = 0;
+PORTC = 1;
+c++;
+}
+}
+static void Task2(void *pvparameter)
+{
+
+if( xSemaphore != NULL )
+{
+
+if( xSemaphoreTake( xSemaphore, ( TickType_t ) 10 ) == pdTRUE )
+{
+TRISA = 0;
+TRISA = 1;
+xSemaphoreGive( xSemaphore );
+}
+}
+}
+void vApplicationIdleHook( void )
+{
+vCoRoutineSchedule();
+}
+
+
