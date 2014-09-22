@@ -1,0 +1,19 @@
+#include<p24fj128gb110.h>
+#include"freertos.h"
+#include<task.h>
+#include<queue.h>
+#include<coroutine.h>
+static void Task1(void* pvpointer)
+int main()
+{
+xTaskCreate( vTaskCode, "NAME", 2000, NULL, 2,NULL);
+vTaskStartScheduler();
+return 0;
+ }
+void Task1(void* pvparameter)
+{
+while(1)
+{ TRIS A=0;
+PORT A=1;
+}
+}
