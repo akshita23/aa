@@ -1,0 +1,50 @@
+Inter task communication through queues
+
+#include "FreeRTOS.h"
+#include"task.h"
+#include"queue.h"
+#include "croutine.h"
+#define LEDS        PORTB
+#define ON          0xFF
+#define OUTPUT_PINS 0x00
+#define OFF         0x00
+static void task1(void *pvparameter);
+static void task2(void* pvparameter);
+xQueueHandle xQueue=NULL;
+int main()
+{xQueue=xQueueCreate(5,sizeof(int));
+xTaskCreate( task1, "NAME", 2000, NULL, 2,NULL);
+xTaskCreate( task2, "NAME2",2000, NULL, 1,NULL);
+TRISB = OUTPUT_PINS;
+vTaskStartScheduler();
+return 0;
+}
+static void task1(void*pvparameter)
+{
+    int item=0;
+    while(1)
+    {
+        if(xQueue!=0)
+        {
+            if(xQueueSend(xQueue,&item,5000))
+                LEDS = ON;
+        }
+    }
+}
+static void task2(void*pvparameter)
+{
+    int item=0;
+    while(1)
+    {
+        if(xQueue!=0)
+        {
+            if(xQueueReceive(xQueue,&item,5000))
+                LEDS = OFF;
+        }
+    }
+    }
+void vApplicationIdleHook( void )
+{
+	/* Schedule the co-routines from within the idle task hook. */
+	vCoRoutineSchedule();
+}
