@@ -1,0 +1,60 @@
+#include<p24fj128gb110.h>
+#include"freertos.h"
+#include<task.h>
+#include<semphr.h>
+static void task1(void *pvparameter);
+static void task2(void *pvparameter);
+xSemaphoreHandle xSemaphore;
+int c=0;
+xSemaphore=xSemaphoreCreateMutex();
+int main(void) {
+    xTaskCreate(Task1,"check",2000,NULL,1,NULL);
+    xTaskCreate(Task2,"check",2000,NULL,1,NULL);
+    vTaskStartSchedular();
+    return 0;
+}
+static void Task1(void *pvparameter)
+{
+    while(1)
+    {
+        if(xSemaphore!=NULL)
+        {
+            if(xSemaphoreGive(xSemaphore)!=NULL)
+                return;
+    }
+  if( xSemaphoreTake( xSemaphore, ( TickType_t ) 10 ) == pdTRUE )
+{
+      puts("task got access");
+      c++;
+      xSemaphoreGive( xSemaphore );
+  }
+  else
+  {
+      puts("no acess to task 1");
+  }
+        vTaskDelay(1000);
+    }
+    }
+        static void Task2(void *pvparameter)
+        {
+            while(1)
+    {
+        if(xSemaphore!=NULL)
+        {
+            if(xSemaphoreGive(xSemaphore)!=NULL)
+                return;
+    }
+  if( xSemaphoreTake( xSemaphore, ( TickType_t ) 10 ) == pdTRUE )
+{
+      puts("task2 got access");
+      c++;
+      xSemaphoreGive( xSemaphore );
+  }
+  else
+  {
+      puts("no acess to task 2");
+  }
+        vTaskDelay(1000);
+    }
+    }
+      
